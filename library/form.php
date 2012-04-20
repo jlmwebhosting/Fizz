@@ -69,7 +69,7 @@ class Form
 	{
 		// not all input methods need to be validated
 		$valid_input_methods = array(
-			'label', 'text', 'password', 'hidden', 'search', 'email',
+			'label', 'text', 'password', 'search', 'email',
 			'telephone', 'url', 'number', 'date', 'file', 'textarea', 'select',
 			'checkbox', 'radio', 'image'
 		);
