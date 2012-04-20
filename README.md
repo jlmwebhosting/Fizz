@@ -29,7 +29,9 @@ To get error handling working, whenever you add some validation to your code, do
 	$validation = Validator::make($post, $rules);
 	Fizz\Form::set_validator($validation);
 
-What this does is make the $validator object available to Fizz, and allows us to do some error checking.
+What this does is make the $validator object available to Fizz, and allows us to do some error checking. If any errors are found for a given form element, it will attach a "form-error" class to that field. This is the default however, and can be changed by (anywhere in your app), setting:
+
+	Fizz\Form::set_error_class($error_class);
 
 Optional
 --------
