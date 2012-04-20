@@ -5,7 +5,7 @@ Fizz is a connector between Laravel&#39;s Form and Validator classes, providing 
 
 Installation
 ------------
-Download the Fizz files and install into your application root/bundles directory. Then, in application/start.php, add the following:
+Download the Fizz files and install into your application root/bundles directory. Then, in application/bundles.php, add the following:
 
 	return array(
 		'fizz' => array('auto' => true)
