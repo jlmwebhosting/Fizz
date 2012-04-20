@@ -1,7 +1,7 @@
 Fizz
 ====
 
-Fizz is a connector between Laravel&#39;s Form and Validator classes, providing 2 core pieces of functionality: form field value population, and error highlighting.
+Fizz is a connector between Laravel&#39;s Form and Validator classes, providing 2 core pieces of functionality: form field value population, and error highlighting. It's goals were to bridge the gap between these two related libraries, and yet stay flexible to keep out of the developer's way when needed.
 
 Installation
 ------------
