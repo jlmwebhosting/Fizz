@@ -159,6 +159,6 @@ class Form
 	 */
 	private static function _invalid($field)
 	{
-		return (self::$_validator && isset(self::$_validator->errors->messages[$field]));
+		return (self::$_validator && self::$_validator->invalid() && isset(self::$_validator->errors->messages[$field]));
 	}
 }
