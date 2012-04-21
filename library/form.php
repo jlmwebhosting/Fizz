@@ -56,80 +56,174 @@ class Form
 	}
 
 	/**
-	 * A little magic. Checks for the method being called and then does the
-	 * validation check for the given field. If the method called cannot match
-	 * any method available on the class, it then passes the responsbility
-	 * to the Laravel\Form class. In this sense it has a sort of pseudo-hierarchical
-	 * aspect, but do not confuse it with any form of actual inheritance.
+	 * Does the meaty work, checking for existing values, field
+	 * highlighting.etc.
 	 *
-	 * @param string $method
-	 * @param array $arguments
+	 * @return array First element is the value for the element, 2nd is the modified attributes array
 	 */
-	public static function __callStatic($method, $arguments) 
-	{
-		// not all input methods need to be validated
-		$valid_input_methods = array(
-			'label', 'text', 'password', 'search', 'email',
-			'telephone', 'url', 'number', 'date', 'file', 'textarea', 'select',
-			'checkbox', 'radio', 'image'
-		);
+	private static function _fizzle($name, $value, $attributes) {
+		$value      = self::_handle_value($name, $value);
+		$attributes = self::_check($name, $attributes);
 
-		// if the desired method is a form field of sorts, let's do some magic
-		if (in_array($method, $valid_input_methods)) {
-			$name = $arguments[0];
-			$attr_key = count($arguments)-1;
-			
-			// check to see if it's valid, and update $attributes array if necessary
-			$arguments[$attr_key] = self::_check($name, $arguments[$attr_key]);
-			$arguments = self::_handle_value($method, $arguments);
-		}
-
-		// now call the original method that it was after. The reaso why we don't do a method
-		// check, is because Laravel's Form class will handle the Form macros if they've been setup,
-		// which we want to stay away from ;)
-		return call_user_func_array(array('Laravel\Form', $method), $arguments);
+		return array($value, $attributes);
 	}
 
 	/**
-	 * Using the input class, the method, and the provided arguments, looks to see
+	 * Text field
+	 */
+	public static function text($name, $value = null, $attributes = array())
+	{
+		list($value, $attributes) = self::_fizzle($name, $value, $attributes);
+		return \Laravel\Form::text($name, $value, $attributes);
+	}
+
+	/**
+	 * Password field
+	 */
+	public static function password($name, $attributes = array())
+	{
+		list($value, $attributes) = self::_fizzle($name, '', $attributes);
+		return \Laravel\Form::password($name, $attributes);
+	}
+
+	/**
+	 * Hidden field
+	 */
+	public static function hidden($name, $value = null, $attributes = array())
+	{
+		$value = self::_handle_value($name, $value);
+		return \Laravel\Form::hidden($name, $value, $attributes);
+	}
+
+	/**
+	 * Search field
+	 */
+	public static function search($name, $value = null, $attributes = array())
+	{
+		list($value, $attributes) = self::_fizzle($name, $value, $attributes);
+		return \Laravel\Form::search($name, $value, $attributes);
+	}
+
+	/**
+	 * Email field
+	 */
+	public static function email($name, $value = null, $attributes = array())
+	{
+		list($value, $attributes) = self::_fizzle($name, $value, $attributes);
+		return \Laravel\Form::email($name, $value, $attributes);
+	}
+
+	/**
+	 * Telephone field
+	 */
+	public static function telephone($name, $value = null, $attributes = array())
+	{
+		list($value, $attributes) = self::_fizzle($name, $value, $attributes);
+		return \Laravel\Form::telephone($name, $value, $attributes);
+	}
+
+	/**
+	 * URL field
+	 */
+	public static function url($name, $value = null, $attributes = array())
+	{
+		list($value, $attributes) = self::_fizzle($name, $value, $attributes);
+		return \Laravel\Form::url($name, $value, $attributes);
+	}
+
+	/**
+	 * Number field
+	 */
+	public static function number($name, $value = null, $attributes = array())
+	{
+		list($value, $attributes) = self::_fizzle($name, $value, $attributes);
+		return \Laravel\Form::number($name, $value, $attributes);
+	}
+
+	/**
+	 * Date field
+	 */
+	public static function date($name, $value = null, $attributes = array())
+	{
+		list($value, $attributes) = self::_fizzle($name, $value, $attributes);
+		return \Laravel\Form::date($name, $value, $attributes);
+	}
+
+	/**
+	 * Textarea field
+	 */
+	public static function textarea($name, $value = null, $attributes = array())
+	{
+		list($value, $attributes) = self::_fizzle($name, $value, $attributes);
+		return \Laravel\Form::textarea($name, $value, $attributes);
+	}
+
+	/**
+	 * Select field
+	 */
+	public static function select($name, $options = array(), $selected = null, $attributes = array())
+	{
+		list($value, $attributes) = self::_fizzle($name, $selected, $attributes);
+		return \Laravel\Form::select($name, $options, $value, $attributes);
+	}
+
+	/**
+	 * Checkbox field
+	 */
+	public static function checkbox($name, $value = 1, $checked = false, $attributes = array())
+	{
+		$set_value = \Laravel\Input::get($name);
+		if ($set_value) {
+			$checked = true;
+		}
+
+		list($value, $attributes) = self::_fizzle($name, $value, $attributes);
+		return \Laravel\Form::checkbox($name, $value, $checked, $attributes);
+	}
+
+	/**
+	 * Radio field
+	 */
+	public static function radio($name, $value = null, $checked = false, $attributes = array())
+	{
+		$set_value = \Laravel\Input::get($name);
+		if ($set_value == $value) {
+			$checked = true;
+		}
+
+		$fizzle_check = self::_fizzle($name, $value, $attributes);
+		$attributes = array_pop($fizzle_check);
+
+		return \Laravel\Form::radio($name, $value, $checked, $attributes);
+	}
+
+	/**
+	 * Any method that does not exist on this class should be immediately
+	 * sent to Laravel's form class, so as to continue support of form macros.
+	 */
+	public static function __callStatic($method, $arguments) {
+		return call_user_func_array('\\Laravel\\Form::' . $method, $arguments);
+	}
+
+	/**
+	 * Using the input class, and the field name, looks to see
 	 * if a value is already present for the selected form element. If it is, it
 	 * will correctly choose the right action (populate the value, check the box,
 	 * select the appropriate option.etc.)
 	 *
-	 * @param string $method
-	 * @param array $arguments
+	 * @param string $field
 	 */
-	private static function _handle_value($method, $arguments)
+	private static function _handle_value($field, $default)
 	{
 		$set_value = false;
-		$possible_value = \Laravel\Input::get($arguments[0]);
+		$possible_value = \Laravel\Input::get($field);
 
 		if ($possible_value or $possible_value === 0) {
-			$set_value = true;
+			return $possible_value;
 		}
-
-		switch ($method)
-		{
-			case 'text':
-			case 'textarea':
-			case 'email':
-			case 'hidden':
-			case 'search':
-			case 'date':
-			case 'number':
-			case 'url':
-			case 'tel':
-				if ($set_value) $arguments[1] = $possible_value;
-				break;
-			case 'select':
-				if ($set_value) $arguments[2] = $possible_value;
-				break;
-			case 'checkbox':
-			case 'radio':
-				if ($set_value) $arguments[2] = true;
+		else {
+			return $default;
 		}
-
-		return $arguments;
 	}
 
 	/**
@@ -145,6 +239,7 @@ class Form
 		
 		if (self::_invalid($field))
 		{
+
 			$attributes['class'] = (!isset($attributes['class'])) ? self::$_error_class : $attributes['class'].' '.self::$_error_class;
 		}
 
