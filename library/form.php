@@ -254,6 +254,18 @@ class Form
 	 */
 	private static function _invalid($field)
 	{
-		return (self::$_validator && self::$_validator->invalid() && isset(self::$_validator->errors->messages[$field]));
+		if (self::$_validator)
+		{
+			// check to see if this field has a confirmation issue
+			if (strpos($field, 'confirmation')) {
+				$field_without_confirm = str_replace('_confirmation', '', $field);
+				if (isset(self::$_validator->errors->messages[$field_without_confirm])) {
+					// the field without the confirmation has an error, so we have to assume this one does as well
+					return true;
+				}
+			}
+		
+			return (self::$_validator->invalid() && isset(self::$_validator->errors->messages[$field]));
+		}
 	}
 }
