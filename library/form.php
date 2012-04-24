@@ -26,14 +26,6 @@ class Form
 	private static $_validator;
 
 	/**
-	 * The error class to be added to form fields if the 
-	 * provided field has failed validation.
-	 *
-	 * @param string
-	 */
-	private static $_error_class = 'form-error';
-
-	/**
 	 * Stores the Validator object that we'll be using
 	 * to check for error messages and the like.
 	 * 
@@ -43,16 +35,6 @@ class Form
 	public static function set_validator(\Laravel\Validator $validator)
 	{
 		self::$_validator = $validator;
-	}
-
-	/**
-	 * Sets the error class to be used for form elements that
-	 * have failed validation.
-	 *
-	 * @param string $error_class
-	 */
-	public static function set_error_class($error_class) {
-		self::$_error_class = $error_class;
 	}
 
 	/**
@@ -239,8 +221,8 @@ class Form
 		
 		if (self::_invalid($field))
 		{
-
-			$attributes['class'] = (!isset($attributes['class'])) ? self::$_error_class : $attributes['class'].' '.self::$_error_class;
+			$error_class = Config::get('error_class');
+			$attributes['class'] = (!isset($attributes['class'])) ? $error_class : $attributes['class'].' '.$error_class;
 		}
 
 		return $attributes;
