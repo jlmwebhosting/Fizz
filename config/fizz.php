@@ -1,4 +1,4 @@
 <?php
 return array(
-   'class_name' => 'form-error'
+   'fizz_error_class_name' => 'form-error'
 );

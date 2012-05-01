@@ -221,10 +221,10 @@ class Form
 		
 		if (self::_invalid($field))
 		{
-			$error_class = Config::get('error_class');
+			$error_class = Config::get('fizz_error_class_name');
 			$attributes['class'] = (!isset($attributes['class'])) ? $error_class : $attributes['class'].' '.$error_class;
 		}
-
+		
 		return $attributes;
 	}
 
