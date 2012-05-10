@@ -184,7 +184,7 @@ class Form
 	 * sent to Laravel's form class, so as to continue support of form macros.
 	 */
 	public static function __callStatic($method, $arguments) {
-		return call_user_func_array('\\Laravel\\Form::' . $method, $arguments);
+		return call_user_func_array('Laravel\\Form::' . $method, $arguments);
 	}
 
 	/**
