@@ -38,7 +38,10 @@ class Form extends \Laravel\Form
 	/**
 	 * Stores the errors that have been created at some point during
 	 * the validation process - either during the first request,
-	 * or part of another.
+	 * or as part of another. For values, if this is not defined, Fizz
+	 * will look at two separate methods : Input::get() and Input::old().
+	 * Input::old will be checked first, with Input::get() set as the default
+	 * if either old() or $values array is empty.
 	 * 
 	 * @param array $errors
 	 * @param array $values - Associative array of form field values
@@ -46,7 +49,16 @@ class Form extends \Laravel\Form
 	public static function set_data(array $errors, array $values = array())
 	{
 		self::$errors = $errors;
-		self::$values = $values;
+
+		if ($values)
+			self::$values = $values;
+		else {
+			$old = array_except(Input::old(), array('csrf_token'));
+			if ($old)
+				self::$values = $old;
+			else
+				self::$values = Input::get() ?: array();
+		}
 	}
 
 	/**
