@@ -27,6 +27,15 @@ class Form extends \Laravel\Form
 	private static $errors;
 
 	/**
+	 * Stores the values that may have added for field population. Values
+	 * should be stored as an associative array, with the index as the name
+	 * of the field, and the value as the field's value.
+	 *
+	 * @var array
+	 */
+	private static $values;
+
+	/**
 	 * Stores the errors that have been created at some point during
 	 * the validation process - either during the first request,
 	 * or part of another.
@@ -34,7 +43,7 @@ class Form extends \Laravel\Form
 	 * @param array $errors
 	 * @param array $values - Associative array of form field values
 	 */
-	public static function set_validator(array $errors, array $values = array())
+	public static function set_data(array $errors, array $values = array())
 	{
 		self::$errors = $errors;
 		self::$values = $values;
@@ -193,7 +202,7 @@ class Form extends \Laravel\Form
 	private static function _handle_value($field, $default)
 	{
 		$set_value = false;
-		$possible_value = self::$values[$field] ?: Input::get($field);
+		$possible_value = @self::$values[$field] ?: Input::get($field);
 
 		if ($possible_value or $possible_value === 0) {
 			return $possible_value;
