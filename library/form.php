@@ -14,27 +14,30 @@
  */
 namespace Fizz;
 
-class Form
+use \Laravel\Config;
+use \Laravel\Input;
+
+class Form extends \Laravel\Form
 {
 	/**
-	 * Stores access to the validation class. When rendering
-	 * form elements, we access this regularly to see if any
-	 * error messages exist for a given field.
+	 * Stores access to the errors generated from validation.
 	 *
-	 * @param \Laravel\Validator
+	 * @var array
 	 */
-	private static $_validator;
+	private static $errors;
 
 	/**
-	 * Stores the Validator object that we'll be using
-	 * to check for error messages and the like.
+	 * Stores the errors that have been created at some point during
+	 * the validation process - either during the first request,
+	 * or part of another.
 	 * 
-	 * @param Validator $validator
-	 * @return void
+	 * @param array $errors
+	 * @param array $values - Associative array of form field values
 	 */
-	public static function set_validator(\Laravel\Validator $validator)
+	public static function set_validator(array $errors, array $values = array())
 	{
-		self::$_validator = $validator;
+		self::$errors = $errors;
+		self::$values = $values;
 	}
 
 	/**
@@ -56,7 +59,7 @@ class Form
 	public static function text($name, $value = null, $attributes = array())
 	{
 		list($value, $attributes) = self::_fizzle($name, $value, $attributes);
-		return \Laravel\Form::text($name, $value, $attributes);
+		return parent::text($name, $value, $attributes);
 	}
 
 	/**
@@ -65,7 +68,7 @@ class Form
 	public static function password($name, $attributes = array())
 	{
 		list($value, $attributes) = self::_fizzle($name, '', $attributes);
-		return \Laravel\Form::password($name, $attributes);
+		return parent::password($name, $attributes);
 	}
 
 	/**
@@ -74,7 +77,7 @@ class Form
 	public static function hidden($name, $value = null, $attributes = array())
 	{
 		$value = self::_handle_value($name, $value);
-		return \Laravel\Form::hidden($name, $value, $attributes);
+		return parent::hidden($name, $value, $attributes);
 	}
 
 	/**
@@ -83,7 +86,7 @@ class Form
 	public static function search($name, $value = null, $attributes = array())
 	{
 		list($value, $attributes) = self::_fizzle($name, $value, $attributes);
-		return \Laravel\Form::search($name, $value, $attributes);
+		return parent::search($name, $value, $attributes);
 	}
 
 	/**
@@ -92,7 +95,7 @@ class Form
 	public static function email($name, $value = null, $attributes = array())
 	{
 		list($value, $attributes) = self::_fizzle($name, $value, $attributes);
-		return \Laravel\Form::email($name, $value, $attributes);
+		return parent::email($name, $value, $attributes);
 	}
 
 	/**
@@ -101,7 +104,7 @@ class Form
 	public static function telephone($name, $value = null, $attributes = array())
 	{
 		list($value, $attributes) = self::_fizzle($name, $value, $attributes);
-		return \Laravel\Form::telephone($name, $value, $attributes);
+		return parent::telephone($name, $value, $attributes);
 	}
 
 	/**
@@ -110,7 +113,7 @@ class Form
 	public static function url($name, $value = null, $attributes = array())
 	{
 		list($value, $attributes) = self::_fizzle($name, $value, $attributes);
-		return \Laravel\Form::url($name, $value, $attributes);
+		return parent::url($name, $value, $attributes);
 	}
 
 	/**
@@ -119,7 +122,7 @@ class Form
 	public static function number($name, $value = null, $attributes = array())
 	{
 		list($value, $attributes) = self::_fizzle($name, $value, $attributes);
-		return \Laravel\Form::number($name, $value, $attributes);
+		return parent::number($name, $value, $attributes);
 	}
 
 	/**
@@ -128,7 +131,7 @@ class Form
 	public static function date($name, $value = null, $attributes = array())
 	{
 		list($value, $attributes) = self::_fizzle($name, $value, $attributes);
-		return \Laravel\Form::date($name, $value, $attributes);
+		return parent::date($name, $value, $attributes);
 	}
 
 	/**
@@ -137,7 +140,7 @@ class Form
 	public static function textarea($name, $value = null, $attributes = array())
 	{
 		list($value, $attributes) = self::_fizzle($name, $value, $attributes);
-		return \Laravel\Form::textarea($name, $value, $attributes);
+		return parent::textarea($name, $value, $attributes);
 	}
 
 	/**
@@ -146,7 +149,7 @@ class Form
 	public static function select($name, $options = array(), $selected = null, $attributes = array())
 	{
 		list($value, $attributes) = self::_fizzle($name, $selected, $attributes);
-		return \Laravel\Form::select($name, $options, $value, $attributes);
+		return parent::select($name, $options, $value, $attributes);
 	}
 
 	/**
@@ -154,13 +157,13 @@ class Form
 	 */
 	public static function checkbox($name, $value = 1, $checked = false, $attributes = array())
 	{
-		$set_value = \Laravel\Input::get($name);
+		$set_value = self::$values($name);
 		if ($set_value) {
 			$checked = true;
 		}
 
 		list($value, $attributes) = self::_fizzle($name, $value, $attributes);
-		return \Laravel\Form::checkbox($name, $value, $checked, $attributes);
+		return parent::checkbox($name, $value, $checked, $attributes);
 	}
 
 	/**
@@ -168,7 +171,7 @@ class Form
 	 */
 	public static function radio($name, $value = null, $checked = false, $attributes = array())
 	{
-		$set_value = \Laravel\Input::get($name);
+		$set_value = self::$values($name);
 		if ($set_value == $value) {
 			$checked = true;
 		}
@@ -176,15 +179,7 @@ class Form
 		$fizzle_check = self::_fizzle($name, $value, $attributes);
 		$attributes = array_pop($fizzle_check);
 
-		return \Laravel\Form::radio($name, $value, $checked, $attributes);
-	}
-
-	/**
-	 * Any method that does not exist on this class should be immediately
-	 * sent to Laravel's form class, so as to continue support of form macros.
-	 */
-	public static function __callStatic($method, $arguments) {
-		return call_user_func_array('Laravel\\Form::' . $method, $arguments);
+		return parent::radio($name, $value, $checked, $attributes);
 	}
 
 	/**
@@ -198,7 +193,7 @@ class Form
 	private static function _handle_value($field, $default)
 	{
 		$set_value = false;
-		$possible_value = \Laravel\Input::get($field);
+		$possible_value = self::$values[$field] ?: Input::get($field);
 
 		if ($possible_value or $possible_value === 0) {
 			return $possible_value;
@@ -221,7 +216,7 @@ class Form
 		
 		if (self::_invalid($field))
 		{
-			$error_class = \Laravel\Config::get('fizz::fizz.fizz_error_class_name');
+			$error_class = Config::get('fizz::fizz.fizz_error_class_name', Config::get('fizz.fizz_error_class_name'));
 			$attributes['class'] = (!isset($attributes['class'])) ? $error_class : $attributes['class'].' '.$error_class;
 		}
 		
@@ -236,18 +231,17 @@ class Form
 	 */
 	private static function _invalid($field)
 	{
-		if (self::$_validator)
-		{
+		if (self::$errors) {
 			// check to see if this field has a confirmation issue
 			if (strpos($field, 'confirmation')) {
 				$field_without_confirm = str_replace('_confirmation', '', $field);
-				if (isset(self::$_validator->errors->messages[$field_without_confirm])) {
+				if (isset(self::$errors[$field_without_confirm])) {
 					// the field without the confirmation has an error, so we have to assume this one does as well
 					return true;
 				}
 			}
 		
-			return (self::$_validator->invalid() && isset(self::$_validator->errors->messages[$field]));
+			return isset(self::$errors[$field]);
 		}
 	}
 }
