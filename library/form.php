@@ -47,7 +47,7 @@ class Form extends \Laravel\Form
 	 * @param array $errors
 	 * @param array $values - Associative array of form field values
 	 */
-	public static function set_data(array $errors = array(), array $values = array())
+	public static function set_data($errors = array(), $values = array())
 	{
 		self::$errors = $errors;
 		
