@@ -11,7 +11,7 @@
  *
  * @author Kirk Bushell
  * @date 30th Jan 2013
- * @version 1.1
+ * @version 1.2
  */
 namespace Fizz;
 
