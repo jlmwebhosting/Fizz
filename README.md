@@ -2,6 +2,12 @@ FIZZ
 ====
 Fizz is a connector between Laravel's Form and Validator classes, providing 2 core pieces of functionality: form field value population, and error highlighting. Its goals are to bridge the gap between these two related libraries, and yet stay flexible enough to stay out of the developer's way when needed.
 
+Goals
+-----
+Fizz intends to help with the form creation process, whilst not imposing any of its own ideologies or patterns, other than extending Laravel's native form methods. The intent is to create a Form library that performs the very mundane (highlighting form fields, and automatic form element value population) automatically and still allow developers the freedom to do what they need, when they need it. Nothing irritates me more than using a library only to find that I have to write pseudo-code to get around its own design flaws when I have unique use cases.
+
+Fizz lets you get the job done with minimal effort. If you need more functionality, or wish to tailor it specifically for a project - I would advise that you setup your own Form macros, or extend the library directly. Additionally, if you have some suggestions as to how the library could be better, be sure to let me know :)
+
 Installation
 ------------
 Install Fizz using artisan:
