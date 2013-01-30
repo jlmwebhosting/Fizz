@@ -10,7 +10,8 @@
  * use a standard approach for handling both Forms, and Validation.
  *
  * @author Kirk Bushell
- * @date 20th April 2012
+ * @date 30th Jan 2013
+ * @version 1.1
  */
 namespace Fizz;
 
@@ -46,10 +47,10 @@ class Form extends \Laravel\Form
 	 * @param array $errors
 	 * @param array $values - Associative array of form field values
 	 */
-	public static function set_data(array $errors, array $values = array())
+	public static function set_data(array $errors = array(), array $values = array())
 	{
 		self::$errors = $errors;
-
+		
 		if ($values)
 			self::$values = $values;
 		else {
