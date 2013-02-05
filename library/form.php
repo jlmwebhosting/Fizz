@@ -37,20 +37,43 @@ class Form extends \Laravel\Form
 	private static $values;
 
 	/**
-	 * Stores the errors that have been created at some point during
-	 * the validation process - either during the first request,
-	 * or as part of another. For values, if this is not defined, Fizz
-	 * will look at two separate methods : Input::get() and Input::old().
-	 * Input::old will be checked first, with Input::get() set as the default
-	 * if either old() or $values array is empty.
+	 * Sets up the form information.
 	 * 
 	 * @param array $errors
 	 * @param array $values - Associative array of form field values
 	 */
 	public static function set_data($errors = array(), $values = array())
 	{
-		self::$errors = $errors;
-		
+		self::set_errors($errors);
+		self::set_values($values);
+	}
+
+	/**
+	 * Stores the errors that have been created at some point during
+	 * the validation process - either during the first request,
+	 * or as part of another.
+	 *
+	 * @param array $errors
+	 */
+	public static function set_errors($errors) {
+		if ($errors)
+			self::$errors = $errors;
+		else {
+			// We try and assign error values, if they exist
+			$errors = Session::get('errors');
+			if ($errors)) self::$errors = $errors;
+		}
+	}
+
+	/**
+	 * Sets the values for the form library. Fizz
+	 * will look at two separate methods : Input::get() and Input::old().
+	 * Input::old will be checked first, with Input::get() set as the default
+	 * if either old() or $values array is empty.
+	 * 
+	 * @param array $errors
+	 */
+	public static function set_values($values) {
 		if ($values)
 			self::$values = $values;
 		else {
@@ -179,7 +202,7 @@ class Form extends \Laravel\Form
 	 */
 	public static function checkbox($name, $value = 1, $checked = false, $attributes = array())
 	{
-		$set_value = self::$values($name);
+		$set_value = self::$values[$name];
 		if ($set_value) {
 			$checked = true;
 		}
@@ -193,7 +216,7 @@ class Form extends \Laravel\Form
 	 */
 	public static function radio($name, $value = null, $checked = false, $attributes = array())
 	{
-		$set_value = self::$values($name);
+		$set_value = self::$values[$name];
 		if ($set_value == $value) {
 			$checked = true;
 		}
