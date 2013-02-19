@@ -17,6 +17,7 @@ namespace Fizz;
 
 use \Laravel\Config;
 use \Laravel\Input;
+use \Laravel\Session;
 
 class Form extends \Laravel\Form
 {
