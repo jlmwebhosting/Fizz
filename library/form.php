@@ -221,9 +221,11 @@ class Form extends \Laravel\Form
 	 */
 	public static function radio($name, $value = null, $checked = false, $attributes = array())
 	{
-		$set_value = self::$values[$name];
-		if ($set_value == $value) {
-			$checked = true;
+		if (isset(self::$values[$name])) {
+			$set_value = self::$values[$name];
+			if ($set_value == $value) {
+				$checked = true;
+			}
 		}
 
 		$fizzle_check = self::_fizzle($name, $value, $attributes);
