@@ -203,9 +203,13 @@ class Form extends \Laravel\Form
 	 */
 	public static function checkbox($name, $value = 1, $checked = false, $attributes = array())
 	{
-		$set_value = self::$values[$name];
-		if ($set_value) {
-			$checked = true;
+		// Check to see if a value has been set for checkboxes
+		if (isset(self::$values[$name])) {
+			$set_value = self::$values[$name];
+			
+			if ($set_value) {
+				$checked = true;
+			}
 		}
 
 		list($value, $attributes) = self::_fizzle($name, $value, $attributes);
