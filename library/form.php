@@ -62,7 +62,7 @@ class Form extends \Laravel\Form
 		else {
 			// We try and assign error values, if they exist
 			$errors = Session::get('errors');
-			if ($errors)) self::$errors = $errors;
+			if ($errors) self::$errors = $errors;
 		}
 	}
 
