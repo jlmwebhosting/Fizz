@@ -45,8 +45,8 @@ class Form extends \Laravel\Form
 	 */
 	public static function set_data($errors = array(), $values = array())
 	{
-		self::set_errors($errors);
-		self::set_values($values);
+		static::set_errors($errors);
+		static::set_values($values);
 	}
 
 	/**
@@ -58,11 +58,11 @@ class Form extends \Laravel\Form
 	 */
 	public static function set_errors($errors) {
 		if ($errors)
-			self::$errors = $errors;
+			static::$errors = $errors;
 		else {
 			// We try and assign error values, if they exist
 			$errors = Session::get('errors');
-			if ($errors) self::$errors = $errors;
+			if ($errors) static::$errors = $errors;
 		}
 	}
 
@@ -76,13 +76,13 @@ class Form extends \Laravel\Form
 	 */
 	public static function set_values($values) {
 		if ($values)
-			self::$values = $values;
+			static::$values = $values;
 		else {
 			$old = array_except(Input::old(), array('csrf_token'));
 			if ($old)
-				self::$values = $old;
+				static::$values = $old;
 			else
-				self::$values = Input::get() ?: array();
+				static::$values = Input::get() ?: array();
 		}
 	}
 
@@ -93,9 +93,9 @@ class Form extends \Laravel\Form
 	 * @return array First element is the value for the element, 2nd is the modified attributes array
 	 */
 	private static function _fizzle($name, $value, $attributes) {
-		$value      = self::_handle_value($name, $value);
-		$attributes = self::_check($name, $attributes);
-
+		$value      = static::_handle_value($name, $value);
+		$attributes = static::_check($name, $attributes);
+		
 		return array($value, $attributes);
 	}
 
@@ -104,7 +104,7 @@ class Form extends \Laravel\Form
 	 */
 	public static function text($name, $value = null, $attributes = array())
 	{
-		list($value, $attributes) = self::_fizzle($name, $value, $attributes);
+		list($value, $attributes) = static::_fizzle($name, $value, $attributes);
 		return parent::text($name, $value, $attributes);
 	}
 
@@ -113,7 +113,7 @@ class Form extends \Laravel\Form
 	 */
 	public static function password($name, $attributes = array())
 	{
-		list($value, $attributes) = self::_fizzle($name, '', $attributes);
+		list($value, $attributes) = static::_fizzle($name, '', $attributes);
 		return parent::password($name, $attributes);
 	}
 
@@ -122,7 +122,7 @@ class Form extends \Laravel\Form
 	 */
 	public static function hidden($name, $value = null, $attributes = array())
 	{
-		$value = self::_handle_value($name, $value);
+		$value = static::_handle_value($name, $value);
 		return parent::hidden($name, $value, $attributes);
 	}
 
@@ -131,7 +131,7 @@ class Form extends \Laravel\Form
 	 */
 	public static function search($name, $value = null, $attributes = array())
 	{
-		list($value, $attributes) = self::_fizzle($name, $value, $attributes);
+		list($value, $attributes) = static::_fizzle($name, $value, $attributes);
 		return parent::search($name, $value, $attributes);
 	}
 
@@ -140,7 +140,7 @@ class Form extends \Laravel\Form
 	 */
 	public static function email($name, $value = null, $attributes = array())
 	{
-		list($value, $attributes) = self::_fizzle($name, $value, $attributes);
+		list($value, $attributes) = static::_fizzle($name, $value, $attributes);
 		return parent::email($name, $value, $attributes);
 	}
 
@@ -149,7 +149,7 @@ class Form extends \Laravel\Form
 	 */
 	public static function telephone($name, $value = null, $attributes = array())
 	{
-		list($value, $attributes) = self::_fizzle($name, $value, $attributes);
+		list($value, $attributes) = static::_fizzle($name, $value, $attributes);
 		return parent::telephone($name, $value, $attributes);
 	}
 
@@ -158,7 +158,7 @@ class Form extends \Laravel\Form
 	 */
 	public static function url($name, $value = null, $attributes = array())
 	{
-		list($value, $attributes) = self::_fizzle($name, $value, $attributes);
+		list($value, $attributes) = static::_fizzle($name, $value, $attributes);
 		return parent::url($name, $value, $attributes);
 	}
 
@@ -167,7 +167,7 @@ class Form extends \Laravel\Form
 	 */
 	public static function number($name, $value = null, $attributes = array())
 	{
-		list($value, $attributes) = self::_fizzle($name, $value, $attributes);
+		list($value, $attributes) = static::_fizzle($name, $value, $attributes);
 		return parent::number($name, $value, $attributes);
 	}
 
@@ -176,7 +176,7 @@ class Form extends \Laravel\Form
 	 */
 	public static function date($name, $value = null, $attributes = array())
 	{
-		list($value, $attributes) = self::_fizzle($name, $value, $attributes);
+		list($value, $attributes) = static::_fizzle($name, $value, $attributes);
 		return parent::date($name, $value, $attributes);
 	}
 
@@ -185,7 +185,7 @@ class Form extends \Laravel\Form
 	 */
 	public static function textarea($name, $value = null, $attributes = array())
 	{
-		list($value, $attributes) = self::_fizzle($name, $value, $attributes);
+		list($value, $attributes) = static::_fizzle($name, $value, $attributes);
 		return parent::textarea($name, $value, $attributes);
 	}
 
@@ -194,7 +194,7 @@ class Form extends \Laravel\Form
 	 */
 	public static function select($name, $options = array(), $selected = null, $attributes = array())
 	{
-		list($value, $attributes) = self::_fizzle($name, $selected, $attributes);
+		list($value, $attributes) = static::_fizzle($name, $selected, $attributes);
 		return parent::select($name, $options, $value, $attributes);
 	}
 
@@ -204,15 +204,15 @@ class Form extends \Laravel\Form
 	public static function checkbox($name, $value = 1, $checked = false, $attributes = array())
 	{
 		// Check to see if a value has been set for checkboxes
-		if (isset(self::$values[$name])) {
-			$set_value = self::$values[$name];
+		if (isset(static::$values[$name])) {
+			$set_value = static::$values[$name];
 			
 			if ($set_value) {
 				$checked = true;
 			}
 		}
 
-		list($value, $attributes) = self::_fizzle($name, $value, $attributes);
+		list($value, $attributes) = static::_fizzle($name, $value, $attributes);
 		return parent::checkbox($name, $value, $checked, $attributes);
 	}
 
@@ -221,14 +221,14 @@ class Form extends \Laravel\Form
 	 */
 	public static function radio($name, $value = null, $checked = false, $attributes = array())
 	{
-		if (isset(self::$values[$name])) {
-			$set_value = self::$values[$name];
+		if (isset(static::$values[$name])) {
+			$set_value = static::$values[$name];
 			if ($set_value == $value) {
 				$checked = true;
 			}
 		}
 
-		$fizzle_check = self::_fizzle($name, $value, $attributes);
+		$fizzle_check = static::_fizzle($name, $value, $attributes);
 		$attributes = array_pop($fizzle_check);
 
 		return parent::radio($name, $value, $checked, $attributes);
@@ -245,7 +245,7 @@ class Form extends \Laravel\Form
 	private static function _handle_value($field, $default)
 	{
 		$set_value = false;
-		$possible_value = @self::$values[$field] ?: Input::get($field);
+		$possible_value = @static::$values[$field] ?: Input::get($field);
 
 		if ($possible_value or $possible_value === 0) {
 			return $possible_value;
@@ -266,7 +266,7 @@ class Form extends \Laravel\Form
 	{
 		if (!is_array($attributes)) (array) $attributes;
 		
-		if (self::_invalid($field))
+		if (static::_invalid($field))
 		{
 			$error_class = Config::get('fizz::fizz.fizz_error_class_name', Config::get('fizz.fizz_error_class_name'));
 			$attributes['class'] = (!isset($attributes['class'])) ? $error_class : $attributes['class'].' '.$error_class;
@@ -274,26 +274,26 @@ class Form extends \Laravel\Form
 		
 		return $attributes;
 	}
-
+	
 	/**
 	 * Checks to see whether a given field is invalid
-	 *
+	 * 
 	 * @param string $field
 	 * @return boolean true if invalid, false otherwise
 	 */
 	private static function _invalid($field)
 	{
-		if (self::$errors) {
+		if (static::$errors) {
 			// check to see if this field has a confirmation issue
 			if (strpos($field, 'confirmation')) {
 				$field_without_confirm = str_replace('_confirmation', '', $field);
-				if (isset(self::$errors[$field_without_confirm])) {
+				if (isset(static::$errors[$field_without_confirm])) {
 					// the field without the confirmation has an error, so we have to assume this one does as well
 					return true;
 				}
 			}
 		
-			return isset(self::$errors[$field]);
+			return isset(static::$errors[$field]);
 		}
 	}
 }
