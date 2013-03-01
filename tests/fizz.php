@@ -15,4 +15,13 @@ class Fizz_Test extends PHPUnit_Framework_TestCase
 		
 		$class::set_data($errors, $values);
 	}
+	
+	public function testSetErrors() {
+		$errors = array('some error');
+		
+		$class = $this->getMockClass('Fizz\Form', array('set_errors', 'set_values'));
+		$class::staticExpects($this->once())->method('set_errors')->with($errors);
+		
+		$this->assertClassStaticAttributeEquals($errors, 'errors', $class);
+	}
 }
